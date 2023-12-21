@@ -16,8 +16,7 @@ Using the 'Get data' button on the home tab of the ribbon, select the Azure Blob
 ### Loading data from a zip file  
 Firstly unzip the folder containg the csv files, then use the 'Get data' button on the home tab of the ribbon to open the Folder data connector and select 'Combine and Transform' to import the data.
 
-## Creating the data model  
-### Creating the date table  
+## Creating the date table  
 Using DAX I created a date table that will help with time intelligence later on. Each field in the table is as follows  
 - Day Of Week = WEEKDAY('Date'[Order Date]+1)
 - Month Name = FORMAT(DATE(1, 'Date'[Month Number], 1),"mmm")
@@ -30,6 +29,7 @@ Using DAX I created a date table that will help with time intelligence later on.
 - Start Of Year = STARTOFYEAR('Date'[Order Date])
 - Year = YEAR('Date'[Order Date])
 
+## Creating the data model  
 ### Building the star schema data model  
 In the power BI model view I created relationships by dragging fields in one table to another table with a related field, the relationships are as follows  
 - Orders[product_code] to Products[product_code]
@@ -37,4 +37,86 @@ In the power BI model view I created relationships by dragging fields in one tab
 - Orders[User ID] to Customers[User UUID]
 - Orders[Order Date] to Date[date]
 - Orders[Shipping Date] to Date[date]
-  
+
+## Creating a measures table  
+Now that the tables are linked I can create measures that can be used to build visuals. The measures in this table are as follow
+- Current Q Order Target = [Previous Quarter Orders] * 1.1
+- Current Q Profit Target = [Previous Quarter Profit] * 1.1
+- Current Q Revenue Target = [Previous Quarter Revenue] * 1.1
+- Current Quarter Orders = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) RETURN CALCULATE([Total Orders], 'Date'[Start Of Quarter] = CurrentQuarterStart && TODAY())
+- Current Quarter Profit = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) RETURN CALCULATE([Total Profit], 'Date'[Start Of Quarter] = CurrentQuarterStart && TODAY())
+- Current Quarter Revenue = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) RETURN CALCULATE([Total Revenue], 'Date'[Start Of Quarter] = CurrentQuarterStart && TODAY())
+- Last YTD Profit = CALCULATE(SUMX( Orders, (RELATED(Products[Sale Price]) - RELATED(Products[Cost Price])) * Orders[Product Quantity]), DATESYTD(DATEADD('Date'[Order Date],-1,YEAR)))
+- Last YTD Revenue = CALCULATE(SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])), DATESYTD(DATEADD('Date'[Order Date],-1,YEAR)))
+- Most Orders = MAXX (TOPN (1, VALUES ( Customers[Full Name] ), CALCULATE ( SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])) ), DESC), [Total Orders])
+- Orders Target = [Previous Quarter Orders] * 1.05
+- Previous Quarter Orders = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) VAR PreviousQuarterStart = EDATE(CurrentQuarterStart, -3) VAR PreviousQuarterEnd = EDATE(CurrentQuarterStart, -1) RETURN CALCULATE([Total Orders], 'Date'[Start Of Quarter] = PreviousQuarterStart)
+- Previous Quarter Profit = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) VAR PreviousQuarterStart = EDATE(CurrentQuarterStart, -3) VAR PreviousQuarterEnd = EDATE(CurrentQuarterStart, -1) RETURN CALCULATE([Total Profit], 'Date'[Start Of Quarter] = PreviousQuarterStart)
+- Previous Quarter Revenue = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) VAR PreviousQuarterStart = EDATE(CurrentQuarterStart, -3) VAR PreviousQuarterEnd = EDATE(CurrentQuarterStart, -1) RETURN CALCULATE([Total Revenue], 'Date'[Start Of Quarter] = PreviousQuarterStart)
+- Profit per Order = [Total Profit] / [Total Orders]
+- Profit Target = [Previous Quarter Profit] * 1.05
+- Profit YTD = TOTALYTD(SUMX(Orders, (RELATED(Products[Sale Price]) - RELATED(Products[Cost Price])) * Orders[Product Quantity]), 'Date'[Order Date])
+- Revenue per Customer = [Total Revenue]/[Total Customers]
+- Revenue Target = [Previous Quarter Revenue] * 1.05
+- Revenue YTD = TOTALYTD(SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])), 'Date'[Order Date])
+- Target Profit YTD = [Last YTD Profit]*1.2
+- Target Revenue YTD = [Last YTD Revenue] * 1.2
+- Top Customer = MAXX (TOPN (1, VALUES ( Customers[Full Name] ), CALCULATE ( SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])) ), DESC), Customers[Full Name])
+- Top Revenue = MAXX (TOPN (1, VALUES ( Customers[Full Name] ), CALCULATE ( SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])) ), DESC), [Total Revenue])
+- Total Customers = DISTINCTCOUNT(Orders[User ID])
+- Total Orders = COUNT(Orders[Order Date])
+- Total Profit = SUMX( Orders, (RELATED(Products[Sale Price]) - RELATED(Products[Cost Price])) * Orders[Product Quantity])
+- Total Quantity = SUM(Orders[Product Quantity])
+- Total Revenue = SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price]))
+
+## Creating the reports  
+### Executive Summary  
+Total Revenue is a card which takes the measure Total Revenue as its field.  
+Total Orders is a card which takes the measure Total Revenue as its field.  
+Total Revenue is a card which takes the measure Total Revenue as its field. 
+Total Revenue by Start of Month is a line chart that takes Start of Month from the date hierachy on the X-axis and the measure Total Revenue on the Y-axis. 
+Total Orders by Category is a clustered column chart that takes Category on the X-axis and the measure Total Orders on the Y-axis.  
+Top Revenue by Country is a donut chart that takes Country as it legend and the measure Top Revenue as its values.  
+Total Revenue by Store Type is a donut chart that takes Store Type as its legend and the measure Total Revenue as its values.  
+Total Revenue and Revenue Target by Start of Quarter is a KPI that takes the measure Total Revenue as the value, the measure Revenue Target as the Target and Start Of Quarter as the trend axis.  
+Total Profit and Profit Targer by Start of Quarter is a KPI that takes the measure Total Profit as the value, the measure Profit Target as the target and Start Of Quarter as the trend axis.
+Total Orders and Orders Target by Start of Quarter is a KPPI that takes the measure Total Orders as the value, the measure Orders Target as the target and Start Of Quarter as the trend axis.
+
+### Customer Detail  
+Unique Customers is a card that takes the measure Total Customers as its field.  
+Revenue per Customer is a card that take the measure Revenue per Customer as its field.  
+Total Customers by Country is a donut chart that takes Country as its legend and the measure Total Customers as its values.  
+Total Customers by Category is a clustered column chart that takes Category on the X-axis and the measure Total Customers on the Y-axis.  
+Total Customers by Start Of Month is a line graph that takes Start Of Month from the date hierachy on the X-axis and the measure Total Customers on the Y-axis.  
+The table on this page takes Full Name, the measure Total Revenue and the measure Total Orders as its columns. It is limited to the top 20 entries based in the measure Total Revenue.  
+The Top Customer card displays the top customer from the table.  
+The Top Revenue card displays the highest revenue from the table.  
+The Most Orders card displays the highest number of order from the table.  
+The Start Of Year slider takes Start Of Year from the date hierachy as its field.
+
+### Product Detail  
+Sum of Profit per Item and Total Quantity by Description and Category is a scatter chart that takes Description as its value, sum of the measure Profit per Item as its X-axis, the measure Total Quantity as it Y- axis and Category as its legend.  
+Current Quarter Orders and Current Q Order Target is a guage that takes the measure Currnet Quarter Orders as its value and the measure Current Q Order Target as its maximum value.  
+Current Quarter Profit and Current Q Profit Target is a guage that takes the measure Currnet Profit Orders as its value and the measure Current Q Profit Target as its maximum value.  
+Current Quarter Revenue and Current Q Revenue Target is a guage that takes the measure Currnet Quarter Revenue as its value and the measure Current Q Revenue Target as its maximum value.  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
