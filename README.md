@@ -30,4 +30,11 @@ Using DAX I created a date table that will help with time intelligence later on.
 - Start Of Year = STARTOFYEAR('Date'[Order Date])
 - Year = YEAR('Date'[Order Date])
 
+### Building the star schema data model  
+In the power BI model view I created relationships by dragging fields in one table to another table with a related field, the relationships are as follows  
+- Orders[product_code] to Products[product_code]
+- Orders[Store Code] to Stores[store code]
+- Orders[User ID] to Customers[User UUID]
+- Orders[Order Date] to Date[date]
+- Orders[Shipping Date] to Date[date]
   
