@@ -80,7 +80,7 @@ Top Revenue by Country is a donut chart that takes Country as it legend and the 
 Total Revenue by Store Type is a donut chart that takes Store Type as its legend and the measure Total Revenue as its values.  
 Total Revenue and Revenue Target by Start of Quarter is a KPI that takes the measure Total Revenue as the value, the measure Revenue Target as the Target and Start Of Quarter as the trend axis.  
 Total Profit and Profit Targer by Start of Quarter is a KPI that takes the measure Total Profit as the value, the measure Profit Target as the target and Start Of Quarter as the trend axis.
-Total Orders and Orders Target by Start of Quarter is a KPPI that takes the measure Total Orders as the value, the measure Orders Target as the target and Start Of Quarter as the trend axis.
+Total Orders and Orders Target by Start of Quarter is a KPI that takes the measure Total Orders as the value, the measure Orders Target as the target and Start Of Quarter as the trend axis.
 
 ### Customer Detail  
 Unique Customers is a card that takes the measure Total Customers as its field.  
@@ -88,7 +88,7 @@ Revenue per Customer is a card that take the measure Revenue per Customer as its
 Total Customers by Country is a donut chart that takes Country as its legend and the measure Total Customers as its values.  
 Total Customers by Category is a clustered column chart that takes Category on the X-axis and the measure Total Customers on the Y-axis.  
 Total Customers by Start Of Month is a line graph that takes Start Of Month from the date hierachy on the X-axis and the measure Total Customers on the Y-axis.  
-The table on this page takes Full Name, the measure Total Revenue and the measure Total Orders as its columns. It is limited to the top 20 entries based in the measure Total Revenue.  
+The table on this page takes Full Name, the measure Total Revenue and the measure Total Orders as its columns. It is limited to the top 20 entries based on the measure Total Revenue.  
 The Top Customer card displays the top customer from the table.  
 The Top Revenue card displays the highest revenue from the table.  
 The Most Orders card displays the highest number of order from the table.  
@@ -96,10 +96,28 @@ The Start Of Year slider takes Start Of Year from the date hierachy as its field
 
 ### Product Detail  
 Sum of Profit per Item and Total Quantity by Description and Category is a scatter chart that takes Description as its value, sum of the measure Profit per Item as its X-axis, the measure Total Quantity as it Y- axis and Category as its legend.  
-Current Quarter Orders and Current Q Order Target is a guage that takes the measure Currnet Quarter Orders as its value and the measure Current Q Order Target as its maximum value.  
-Current Quarter Profit and Current Q Profit Target is a guage that takes the measure Currnet Profit Orders as its value and the measure Current Q Profit Target as its maximum value.  
-Current Quarter Revenue and Current Q Revenue Target is a guage that takes the measure Currnet Quarter Revenue as its value and the measure Current Q Revenue Target as its maximum value.  
+Current Quarter Orders and Current Q Order Target is a guage that takes the measure Current Quarter Orders as its value and the measure Current Q Order Target as its maximum value.  
+Current Quarter Profit and Current Q Profit Target is a guage that takes the measure Current Profit Orders as its value and the measure Current Q Profit Target as its maximum value.  
+Current Quarter Revenue and Current Q Revenue Target is a guage that takes the measure Current Quarter Revenue as its value and the measure Current Q Revenue Target as its maximum value.  
+The table on this page takes the product Description, the measure Profit per Order, the measure Total Revenue, the measure Total Customers, the measure Total Orders as its columns. It is limited to the top 10 entries based on the Profit per Order measure.  
+Total Revenue by Start Of Quarter and Category is an area chart that takes Start Of Quarter from the date hierachy on the X-axis, the measure Total Revenue on the Y-axis and Category as the legend.  
 
+### Stores Map  
+The slicer on this page takes the stores country as its field.  
+Profit YTD by Geography is a map that takes Geography as its location, the measure Profit YTD as the bubble size and uses the Tooltip page as a tooltip.  
+
+### Stores Drillthrough  
+This is a drillthrough page displayed after selecting a store from the Stores Map.  
+The First Geography card displays the Geography of the selected store.  
+Total Orders by Category takes Category on the X-axis and the measure Total Orders based on the selected store.  
+Profit YTD and Target Profit YTD is a guage that takes the measure Profit YTD as the value and the measure Target Profit YTD as the target value.  
+Revenue YTD and Target Revenue YTD is a guage that takes the measure Revenue YTD as the value and the measure Target Revenue YTD as the target value.  
+The table on this page takes the product Description, the measure Profit YTD, the measure Total Orders and the measure Total Revenue.  
+
+### Tooltip Page  
+When a user hovers over a store bubble on the Stores Map they are shown the tooltip page.  
+Profit YTD and Target Profit YTD uses the measure Profut YTD as the value and the measure Target Profit YTD as the target value.  
+The Geography card shows the slecect store geography. 
 
 
 
