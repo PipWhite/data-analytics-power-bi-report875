@@ -18,7 +18,7 @@ Firstly unzip the folder containg the csv files, then use the 'Get data' button 
 
 ## Creating the date table  
 Using DAX I created a date table that will help with time intelligence later on. Each field in the table is as follows  
-- Day Of Week = WEEKDAY('Date'[Order Date]+1)
+- `Day Of Week = WEEKDAY('Date'[Order Date]+1)`
 - Month Name = FORMAT(DATE(1, 'Date'[Month Number], 1),"mmm")
 - Month Number = MONTH('Date'[Order Date])
 - Date = DATESBETWEEN(Orders[Order Date], MIN(Orders[Order Date]), DATE(2023,12,31))
