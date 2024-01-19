@@ -18,16 +18,16 @@ Firstly unzip the folder containg the csv files, then use the 'Get data' button 
 
 ## Creating the date table  
 Using DAX I created a date table that will help with time intelligence later on. Each field in the table is as follows  
-- `Day Of Week = WEEKDAY('Date'[Order Date]+1)`
--` Month Name = FORMAT(DATE(1, 'Date'[Month Number], 1),"mmm")`
-- Month Number = MONTH('Date'[Order Date])
-- Date = DATESBETWEEN(Orders[Order Date], MIN(Orders[Order Date]), DATE(2023,12,31))
-- Quarter = QUARTER('Date'[Order Date])
-- Start Of Month = STARTOFMONTH('Date'[Order Date])
-- Start Of Quarter = STARTOFQUARTER('Date'[Order Date])
-- Start Of Week = 'Date'[Order Date] - WEEKDAY('Date'[Order Date],2) + 1
-- Start Of Year = STARTOFYEAR('Date'[Order Date])
-- Year = YEAR('Date'[Order Date])
+- `Day Of Week = WEEKDAY('Date'[Order Date]+1)`  
+-` Month Name = FORMAT(DATE(1, 'Date'[Month Number], 1),"mmm")`  
+- `Month Number = MONTH('Date'[Order Date])`  
+- `Date = DATESBETWEEN(Orders[Order Date], MIN(Orders[Order Date]), DATE(2023,12,31))`  
+- `Quarter = QUARTER('Date'[Order Date])`  
+- `Start Of Month = STARTOFMONTH('Date'[Order Date])`  
+- `Start Of Quarter = STARTOFQUARTER('Date'[Order Date])`  
+- `Start Of Week = 'Date'[Order Date] - WEEKDAY('Date'[Order Date],2) + 1`  
+- `Start Of Year = STARTOFYEAR('Date'[Order Date])`  
+- `Year = YEAR('Date'[Order Date])`  
 
 ## Creating the data model  
 ### Building the star schema data model  
@@ -40,34 +40,34 @@ In the power BI model view I created relationships by dragging fields in one tab
 
 ## Creating a measures table  
 Now that the tables are linked I can create measures that can be used to build visuals. The measures in this table are as follow
-- Current Q Order Target = [Previous Quarter Orders] * 1.1
-- Current Q Profit Target = [Previous Quarter Profit] * 1.1
-- Current Q Revenue Target = [Previous Quarter Revenue] * 1.1
-- Current Quarter Orders = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) RETURN CALCULATE([Total Orders], 'Date'[Start Of Quarter] = CurrentQuarterStart && TODAY())
-- Current Quarter Profit = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) RETURN CALCULATE([Total Profit], 'Date'[Start Of Quarter] = CurrentQuarterStart && TODAY())
-- Current Quarter Revenue = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) RETURN CALCULATE([Total Revenue], 'Date'[Start Of Quarter] = CurrentQuarterStart && TODAY())
-- Last YTD Profit = CALCULATE(SUMX( Orders, (RELATED(Products[Sale Price]) - RELATED(Products[Cost Price])) * Orders[Product Quantity]), DATESYTD(DATEADD('Date'[Order Date],-1,YEAR)))
-- Last YTD Revenue = CALCULATE(SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])), DATESYTD(DATEADD('Date'[Order Date],-1,YEAR)))
-- Most Orders = MAXX (TOPN (1, VALUES ( Customers[Full Name] ), CALCULATE ( SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])) ), DESC), [Total Orders])
-- Orders Target = [Previous Quarter Orders] * 1.05
-- Previous Quarter Orders = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) VAR PreviousQuarterStart = EDATE(CurrentQuarterStart, -3) VAR PreviousQuarterEnd = EDATE(CurrentQuarterStart, -1) RETURN CALCULATE([Total Orders], 'Date'[Start Of Quarter] = PreviousQuarterStart)
-- Previous Quarter Profit = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) VAR PreviousQuarterStart = EDATE(CurrentQuarterStart, -3) VAR PreviousQuarterEnd = EDATE(CurrentQuarterStart, -1) RETURN CALCULATE([Total Profit], 'Date'[Start Of Quarter] = PreviousQuarterStart)
-- Previous Quarter Revenue = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) VAR PreviousQuarterStart = EDATE(CurrentQuarterStart, -3) VAR PreviousQuarterEnd = EDATE(CurrentQuarterStart, -1) RETURN CALCULATE([Total Revenue], 'Date'[Start Of Quarter] = PreviousQuarterStart)
-- Profit per Order = [Total Profit] / [Total Orders]
-- Profit Target = [Previous Quarter Profit] * 1.05
-- Profit YTD = TOTALYTD(SUMX(Orders, (RELATED(Products[Sale Price]) - RELATED(Products[Cost Price])) * Orders[Product Quantity]), 'Date'[Order Date])
-- Revenue per Customer = [Total Revenue]/[Total Customers]
-- Revenue Target = [Previous Quarter Revenue] * 1.05
-- Revenue YTD = TOTALYTD(SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])), 'Date'[Order Date])
-- Target Profit YTD = [Last YTD Profit]*1.2
-- Target Revenue YTD = [Last YTD Revenue] * 1.2
-- Top Customer = MAXX (TOPN (1, VALUES ( Customers[Full Name] ), CALCULATE ( SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])) ), DESC), Customers[Full Name])
-- Top Revenue = MAXX (TOPN (1, VALUES ( Customers[Full Name] ), CALCULATE ( SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])) ), DESC), [Total Revenue])
-- Total Customers = DISTINCTCOUNT(Orders[User ID])
-- Total Orders = COUNT(Orders[Order Date])
-- Total Profit = SUMX( Orders, (RELATED(Products[Sale Price]) - RELATED(Products[Cost Price])) * Orders[Product Quantity])
-- Total Quantity = SUM(Orders[Product Quantity])
-- Total Revenue = SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price]))
+- `Current Q Order Target = [Previous Quarter Orders] * 1.1`  
+- `Current Q Profit Target = [Previous Quarter Profit] * 1.1`  
+- `Current Q Revenue Target = [Previous Quarter Revenue] * 1.1`  
+- `Current Quarter Orders = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) RETURN CALCULATE([Total Orders], 'Date'[Start Of Quarter] = CurrentQuarterStart && TODAY())`  
+- `Current Quarter Profit = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) RETURN CALCULATE([Total Profit], 'Date'[Start Of Quarter] = CurrentQuarterStart && TODAY())`  
+- `Current Quarter Revenue = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) RETURN CALCULATE([Total Revenue], 'Date'[Start Of Quarter] = CurrentQuarterStart && TODAY())`  
+- `Last YTD Profit = CALCULATE(SUMX( Orders, (RELATED(Products[Sale Price]) - RELATED(Products[Cost Price])) * Orders[Product Quantity]), DATESYTD(DATEADD('Date'[Order Date],-1,YEAR)))`  
+- `Last YTD Revenue = CALCULATE(SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])), DATESYTD(DATEADD('Date'[Order Date],-1,YEAR)))`  
+- `Most Orders = MAXX (TOPN (1, VALUES ( Customers[Full Name] ), CALCULATE ( SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])) ), DESC), [Total Orders])`  
+- `Orders Target = [Previous Quarter Orders] * 1.05`  
+- `Previous Quarter Orders = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) VAR PreviousQuarterStart = EDATE(CurrentQuarterStart, -3) VAR PreviousQuarterEnd = EDATE(CurrentQuarterStart, -1) RETURN CALCULATE([Total Orders], 'Date'[Start Of Quarter] = PreviousQuarterStart)`  
+- `Previous Quarter Profit = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) VAR PreviousQuarterStart = EDATE(CurrentQuarterStart, -3) VAR PreviousQuarterEnd = EDATE(CurrentQuarterStart, -1) RETURN CALCULATE([Total Profit], 'Date'[Start Of Quarter] = PreviousQuarterStart)`  
+- `Previous Quarter Revenue = VAR CurrentQuarterStart = MAX('Date'[Start Of Quarter]) VAR PreviousQuarterStart = EDATE(CurrentQuarterStart, -3) VAR PreviousQuarterEnd = EDATE(CurrentQuarterStart, -1) RETURN CALCULATE([Total Revenue], 'Date'[Start Of Quarter] = PreviousQuarterStart)`  
+- `Profit per Order = [Total Profit] / [Total Orders]`  
+- `Profit Target = [Previous Quarter Profit] * 1.05`  
+- `Profit YTD = TOTALYTD(SUMX(Orders, (RELATED(Products[Sale Price]) - RELATED(Products[Cost Price])) * Orders[Product Quantity]), 'Date'[Order Date])`  
+- `Revenue per Customer = [Total Revenue]/[Total Customers]`  
+- `Revenue Target = [Previous Quarter Revenue] * 1.05`  
+- `Revenue YTD = TOTALYTD(SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])), 'Date'[Order Date])`  
+- `Target Profit YTD = [Last YTD Profit]*1.2`  
+- `Target Revenue YTD = [Last YTD Revenue] * 1.2`  
+- `Top Customer = MAXX (TOPN (1, VALUES ( Customers[Full Name] ), CALCULATE ( SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])) ), DESC), Customers[Full Name])`  
+- `Top Revenue = MAXX (TOPN (1, VALUES ( Customers[Full Name] ), CALCULATE ( SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price])) ), DESC), [Total Revenue])`  
+- `Total Customers = DISTINCTCOUNT(Orders[User ID])`  
+- `Total Orders = COUNT(Orders[Order Date])`  
+- `Total Profit = SUMX( Orders, (RELATED(Products[Sale Price]) - RELATED(Products[Cost Price])) * Orders[Product Quantity])`  
+- `Total Quantity = SUM(Orders[Product Quantity])`  
+- `Total Revenue = SUMX(Orders, Orders[Product Quantity] * RELATED(Products[Sale Price]))`  
 
 ## Creating the reports  
 ### Executive Summary  
